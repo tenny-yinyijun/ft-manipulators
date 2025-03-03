@@ -1,0 +1,9 @@
+# data and cache files
+**/__pycache__
+**/*.egg-info
+**/cache
+*.npy
+*.ply
+
+# data directories
+**/data
