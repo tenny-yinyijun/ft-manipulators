@@ -67,14 +67,17 @@ class LinkManipulator2D:
         y = j * self.grid_size  # - self.max_length/2
         return x, y
 
-    def update_map(self, point, bangle):
+    def update_map(self, point, bangle, fixed_jid=None):
         # find which bin in the map does this point fit into
         # same failure configuration is only counted once
+
+        if fixed_jid == None:
+            fixed_jid = self.fixed_jid
         i, j = self.pos_to_grid_coord(point)
         
-        if self.map_failure_cfgs[self.fixed_jid][i][j] != bangle:
-            self.maps[self.fixed_jid][i][j] += 1
-            self.map_failure_cfgs[self.fixed_jid][i][j] = bangle
+        if self.map_failure_cfgs[fixed_jid][i][j] != bangle:
+            self.maps[fixed_jid][i][j] += 1
+            self.map_failure_cfgs[fixed_jid][i][j] = bangle
             
     def set_plt(self, visualize_obstacles):
         plt.gca().clear()
@@ -164,7 +167,30 @@ class LinkManipulator2D:
                     opacity += self.maps[d][i][j] / max_value
                 empty_map[i][j] = opacity
         return empty_map
-        
+    
+    def get_reachability_map_new(self):
+        # first, iterate through all possible configurations
+        maxval = 0
+        for jid in range(self.dof): # for each joint
+            # print("joint id =", jid)
+            for angle in np.arange(-np.pi, np.pi, self.step_size): # for each angle
+                # print("angle =", angle)
+                maxval += 1
+                all_cfg = self.generate_joint_configurations(jid, angle)
+                for cfg in all_cfg:
+                    p, has_collision = self.get_eff_pose(cfg)
+                    if not has_collision:
+                        self.update_map(p, angle, jid)
+        # then, compute the reachability map
+        reachability_map = np.zeros((self.grid_num, self.grid_num))
+        for i in range(self.grid_num):
+            for j in range(self.grid_num):
+                opacity = 0
+                for d in range(self.dof):
+                    opacity += self.maps[d][i][j] #/ max_value
+                reachability_map[i][j] = opacity / maxval
+        return reachability_map    
+    
     def save_binarymap_ftws(self, file_name, max_value, visualize_obstacles=True):
         self.set_plt(visualize_obstacles)
         
@@ -195,12 +221,18 @@ class LinkManipulator2D:
     
     # joint ops
 
-    def generate_joint_configurations(self):
+    def generate_joint_configurations(self, jid=None, jangle=None):
+
+        if jid == None:
+            jid = self.fixed_jid
+        if jangle == None:
+            jangle = self.fixed_jangle
+
         joint_configurations = []
 
         for i in range(self.dof):
-            if i == self.fixed_jid:
-                joint_values = np.array([self.fixed_jangle])
+            if i == jid:
+                joint_values = np.array([jangle])
             else:
                 lower_limit = self.joint_limits[i][0]
                 upper_limit = self.joint_limits[i][1]

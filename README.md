@@ -13,6 +13,7 @@
 Packages required:
 - numpy
 - matplotlib
+- pytorch
 
 ## Data Generation
 
@@ -24,11 +25,11 @@ python scripts/data_gen.py --dim 2 --dof 4 --res 40 --num_examples 2000 # curren
 
 ## Training the Rechability Predictor
 ```bash
-python scripts/train.py --dim 2 --dataset <dataset-name>  --size <num_training_instance>
+python scripts/train.py --dim 2 --dataset <dataset-name>  --size <num-training-instance>
 ```
 
 ## Running the Designer
-To design a failure-tolerant manipulator for any of the example tasks under `\example_tasks`, run:
+To design a failure-tolerant manipulator for any of the example tasks under `example_tasks/`, run:
 ```bash
 python scripts/designer.py --predictor --task  
 ```

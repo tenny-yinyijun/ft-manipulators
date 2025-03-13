@@ -21,7 +21,7 @@ class LinkManipulator3D:
         self,
         dh_params,
         grid_size=0.4,
-        grid_num=10, # change
+        grid_num=10,
         step_size=0.4,
         ftws_step_size=0.4
     ):
@@ -33,7 +33,7 @@ class LinkManipulator3D:
         self.grid_size = grid_size
         self.step_size = step_size
         self.ftws_step_size = ftws_step_size
-        self.grid_num = grid_num # size of reachability map: 40
+        self.grid_num = grid_num
         self.base = np.array([0, 0, 0]) # base mount position
         
         self.obstacles = []
@@ -113,8 +113,6 @@ class LinkManipulator3D:
     def check_collision(self, start, end):
         pass
     
-    # pose
-
     def get_joint_poses(self, cfg):
         # config cfg = [theta_1, theta_2, ...]
         assert len(cfg) == self.dof

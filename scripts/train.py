@@ -144,7 +144,7 @@ def load_data(dataset_name, num_examples):
 if __name__ == "__main__":
     # arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dim", type=int, required=True, help="Dimension of the configuration space")
+    parser.add_argument("--dim", type=int, required=True, help="Dimension of the task space")
     parser.add_argument("--dataset", type=str, required=True, help="Name of dataset to train on")
     parser.add_argument("--size", type=int, required=True, help="Size of dataset to train on")
 
