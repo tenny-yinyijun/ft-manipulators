@@ -41,3 +41,44 @@ def line_circle_intersection(xstart, ystart, xend, yend, a, b, r):
         return True
 
     return False
+
+def train_val_split(train_percent, fnames, train_names, val_names):
+    x1_fname, x2_fname, y_fname = fnames
+    x1_train_fname, x2_train_fname, y_train_fname = train_names
+    x1_val_fname, x2_val_fname, y_val_fname = val_names
+    
+    x1 = np.load(x1_fname) # 200 * 4
+    x2 = np.load(x2_fname) # 200 * 40 * 40
+    y =  np.load(y_fname) # 200 * 40 * 40
+    num_examples = x1.shape[0]
+    
+    train_size = int(num_examples * train_percent)
+    
+    # save train
+    np.save(x1_train_fname, x1[0:train_size])
+    np.save(x2_train_fname, x2[0:train_size])
+    np.save(y_train_fname, y[0:train_size])
+    
+    # save val
+    np.save(x1_val_fname, x1[0:train_size])
+    np.save(x2_val_fname, x2[0:train_size])
+    np.save(y_val_fname, y[0:train_size])
+
+def train_val_split_noobs(train_percent, fnames, train_names, val_names):
+    x1_fname, y_fname = fnames
+    x1_train_fname, y_train_fname = train_names
+    x1_val_fname, y_val_fname = val_names
+    
+    x1 = np.load(x1_fname) # 200 * 4
+    y =  np.load(y_fname) # 200 * 40 * 40
+    num_examples = x1.shape[0]
+    
+    train_size = int(num_examples * train_percent)
+    
+    # save train
+    np.save(x1_train_fname, x1[0:train_size])
+    np.save(y_train_fname, y[0:train_size])
+    
+    # save val
+    np.save(x1_val_fname, x1[train_size:])
+    np.save(y_val_fname, y[train_size:])

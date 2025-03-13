@@ -8,6 +8,7 @@ class LinkManipulator2D:
     def __init__(
         self,
         link_lengths,
+        ws_resolution,
         joint_limits=None,
     ):
         self.dof = len(link_lengths)
@@ -18,7 +19,9 @@ class LinkManipulator2D:
         self.joint_limits = joint_limits
 
         # constants
-        self.resolution = 1 / 10
+        self.ws_resolution = ws_resolution
+        self.max_length = 4.0 # maximum ws side length
+        self.resolution = self.max_length / ws_resolution
         self.step_size = 0.2
         
         self.obstacles = []
@@ -44,7 +47,6 @@ class LinkManipulator2D:
         # returns the map and cfg (to keep track such that the same grid will
         # not be counted twice) of the specified resolution
         self.grid_size = resolution
-        self.max_length = 4.0 # maximum ws side length
         self.grid_num = int(np.ceil(self.max_length / resolution))
         new_map = np.zeros((self.grid_num, self.grid_num), dtype=int)
         new_cfg = np.ones((self.grid_num, self.grid_num), dtype=int) * np.inf
@@ -151,9 +153,9 @@ class LinkManipulator2D:
         
         max_value = max_value * self.dof
 
-        empty_map = np.zeros((40, 40))
+        empty_map = np.zeros((self.ws_resolution, self.ws_resolution))
 
-        assert self.grid_num == 40
+        assert self.grid_num == self.ws_resolution
 
         for i in range(self.grid_num):
             for j in range(self.grid_num):
